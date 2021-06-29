@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.4.5/jscolor.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            /* background-color: lightblue; */
+            margin: 0px;
+        }
+
+        .colors {
+            position: fixed;
+            width: 80vw;
+            height: 5rem;
+            border: 2px solid;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        .color
+         {
+            height: 70%;
+            width: 20%;
+        }
+
+        .red {
+            background-color: lightcoral;
+        }
+
+        .green {
+            background-color: lightgreen;
+        }
+
+        .blue {
+            background-color: lightblue;
+        }
+
+        .download {
+            /* border: 3px solid; */
+            padding-top: 1rem;
+            text-align: center;
+            font-size: 2rem;
+        }
+        .Inc_width,.dec_width{
+            padding-top: 1rem;
+            text-align: center;
+            font-size: 2rem;
+        }
+        .board{
+            height: 100vh;
+            width: 100vw;
+             margin-top: 6rem;
+        }
+        .fa-paint-brush{
+            font-size: xx-large;
+        }
+         .fa-eraser{
+    font-size: xx-large;
+         }
+    </style>
+</head>
+
+<body>
+    <!-- canvas tuts -->
+    <!-- <h1>Canvas Board</h1> -->
+    <!-- tablet -->
+    <div class="colors">
+
+        <div class="download">
+            <i class="fas fa-download large"></i>
+        </div>
+         <input type="file" class="file-selector" style="display: none;">
+         <div class="Inc_width">
+            <i class="fas fa-plus"></i>
+         </div>
+         <div class="dec_width">
+            <i class="fas fa-minus"></i>
+         </div>
+         <div class="eraseOff">
+            <i class="fas fa-eraser"></i>
+         </div>
+         <!-- Color: <input id="colorInput1"> -->
+         <div>
+            <label for="colorWell">Color:</label>
+     <input type="color" value="#000000" id="colorWell">
+     <!-- <i class="fas fa-paint-brush" ></i> -->
+         </div>
+    </div>
+    <img src="https://picsum.photos/200" style="display: none;" alt="" crossorigin="anonymous">
+    <script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
+    <div class="container">
+    <canvas class="board"></canvas>
+    </div>
+    
+    <script>
+ 
+
+ 
+
+let eraser  =document.querySelector(".eraseOff");
+        let board = document.querySelector(".board");
+        // tool -> digitizer pen 
+        let download = document.querySelector(".download");
+        download.addEventListener("click",function(){
+            let url = board.toDataURL();
+            let a  = document.createElement("a");
+            a.download="file.png";
+            a.href= url;
+            a.click();
+            a.remove();
+
+        })
+        let tool = board.getContext("2d");
+        board.height = window.innerHeight;
+        board.width = window.innerWidth;
+       
+    let isDrawing=false;
+    let color = document.querySelectorAll(".color");
+    let allColor = document.querySelector(".colora");
+    let plusBtn = document.querySelector(".Inc_width");
+    let minusBtn = document.querySelector(".dec_width");
+
+ 
+
+// for(let i=0;i<color.length;i++)
+// {
+//     let selected_Color = color[i].classList[1];
+//     console.log(color[i])
+//     color[i].addEventListener("click",function(){
+//         tool.strokeStyle = selected_Color;
+//         console.log(selected_Color);
+//     })
+// }
+board.addEventListener('mousedown', e => {
+  x = e.offsetX;
+  y = e.offsetY;
+  isDrawing = true;
+});
+
+board.addEventListener('mousemove', e => {
+  if (isDrawing === true) {
+    
+    drawLine(tool, x, y, e.offsetX, e.offsetY);
+    x = e.offsetX;
+    y = e.offsetY;
+  }
+});
+board.addEventListener('mouseup',function(e){
+    if(isDrawing==true)
+    {
+    
+        drawLine(tool,x,y,e.offsetX,e.offsetY);
+        x=e.offsetX;
+        y=e.offsetY;
+        isDrawing=!isDrawing;
+    }
+})
+
+
+
+function drawLine(context, x1, y1, x2, y2) {
+  context.beginPath();
+ 
+
+  context.moveTo(x1, y1);
+  context.lineTo(x2, y2);
+  context.stroke();
+  context.closePath();
+}
+
+plusBtn.addEventListener("click",function(){
+    tool.lineWidth+=0.5;
+    if(tool.lineWidth>3)
+    {
+        alert("Cannot Go More");
+    }
+    console.log(tool.lineWidth);
+})
+minusBtn.addEventListener("click",function(){
+    tool.lineWidth-=0.5;
+    if(tool.lineWidth<1)
+    {
+        alert("Cannot Go Less Than This");
+    }
+});
+
+// function getY(originaly)
+// {
+//     let obj=allColor.getBoundingClientRect();
+//     let height = obj.height;
+//     return originaly - obj.height;
+// }
+
+    // 
+    
+    
+    
+    var colorWell;
+var defaultColor = "#000000";
+
+window.addEventListener("load", startup, false);
+function startup() {
+  colorWell = document.querySelector("#colorWell");
+  console.log(colorWell,"cdefaultvaleu");
+  colorWell.value = defaultColor;
+  colorWell.addEventListener("input", updateFirst, false);
+  colorWell.addEventListener("change", updateAll, false);
+  colorWell.select();
+}
+
+function updateFirst(event) {
+ // var p = document.querySelector("p");
+  tool.strokeStyle = event.target.value;
+  
+}
+function updateAll(event) {
+//   document.querySelectorAll("p").forEach(function(p) {
+//     p.style.color = event.target.value;
+//   });
+tool.strokeStyle = event.target.value;
+}
+let clickdOnEraser=false;
+eraser.addEventListener("click",function(){
+    clickdOnEraser=!clickdOnEraser;
+    if(clickdOnEraser==true)
+    {
+        tool.strokeStyle = "white";
+    tool.lineWidth=10;
+    console.log(tool.lineWidth);
+    }
+    else
+    {
+        tool.lineWidth=1;
+    }
+    
+})
+    </script>
+ 
+</body>
+
+</html>
