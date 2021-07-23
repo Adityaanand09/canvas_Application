@@ -91,6 +91,12 @@
          <div class="eraseOff">
             <i class="fas fa-eraser"></i>
          </div>
+         <div class="undo">
+            <i class="fas fa-undo"></i>
+         </div>
+         <div class ="redo">
+            <i class="fas fa-redo"></i>
+         </div>
          <!-- Color: <input id="colorInput1"> -->
          <div>
             <label for="colorWell">Color:</label>
@@ -131,6 +137,8 @@ let eraser  =document.querySelector(".eraseOff");
     let allColor = document.querySelector(".colora");
     let plusBtn = document.querySelector(".Inc_width");
     let minusBtn = document.querySelector(".dec_width");
+    let undoBtn = document.querySelector(".undo");
+    let redoBtn = document.querySelector(".redo");
 
  
 
@@ -147,6 +155,7 @@ board.addEventListener('mousedown', e => {
   x = e.offsetX;
   y = e.offsetY;
   isDrawing = true;
+  
 });
 
 board.addEventListener('mousemove', e => {
@@ -165,7 +174,9 @@ board.addEventListener('mouseup',function(e){
         x=e.offsetX;
         y=e.offsetY;
         isDrawing=!isDrawing;
+        
     }
+    cPush();
 })
 
 
@@ -245,6 +256,32 @@ eraser.addEventListener("click",function(){
         tool.lineWidth=1;
     }
     
+})
+var cPushArray = new Array();
+var cStep = -1;
+
+// ctx = document.getElementById('myCanvas').getContext("2d");
+	
+function cPush() {
+    cStep++;
+    if (cStep < cPushArray.length) { cPushArray.length = cStep; }
+    cPushArray.push(board.toDataURL());
+    console.log(cStep);
+    // console.log("cPush called");
+}
+
+undoBtn.addEventListener("click",function(){
+    console.log("undo Btn clicked");
+if(cStep>=0)
+{
+    // console.log(cStep);
+    console.log(cPushArray);
+    cStep--;
+    let canvasPic = new Image();
+    console.log(canvasPic);
+    canvasPic.src = cPushArray[cStep];
+    canvasPic.onload = function () { tool.drawImage(canvasPic, 0, 0); }
+}
 })
     </script>
  
